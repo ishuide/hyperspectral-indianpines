@@ -116,3 +116,5 @@ This project demonstrates that:
 
 ## Takeaway
 A principled combination of **denoising + sparse modeling** can effectively handle the noise, redundancy, and high dimensionality of hyperspectral data—without resorting to black-box learning models.
+
+update 
