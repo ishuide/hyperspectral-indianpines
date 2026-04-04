@@ -1,120 +1,161 @@
-# Hyperspectral Image Classification on Indian Pines  
-*Least-Square Denoising + ADMM-Based Sparse Representation*
+# 🌿 Hyperspectral Image Classification (Indian Pines)
+
+**Denoising + Sparse Representation using ADMM**
 
 ---
 
-## Overview
-This project investigates hyperspectral image classification on the **Indian Pines dataset**, focusing on improving robustness and accuracy through **explicit denoising and sparse representation**.  
-Rather than relying on black-box models, the pipeline is grounded in **signal processing and optimization principles**.
+## 📌 Overview
+
+This project focuses on classifying hyperspectral images from the **Indian Pines dataset** using a structured, interpretable pipeline.
+
+Instead of relying on complex black-box models, the approach is built using:
+
+* Signal processing (denoising)
+* Optimization techniques (sparse coding with ADMM)
+
+👉 The goal is simple:
+**Improve classification accuracy by cleaning the data and using meaningful representations.**
 
 ---
 
-## Problem Motivation
-Hyperspectral images provide rich spectral information across hundreds of bands, but practical challenges limit classification performance:
+## ❓ Why This Problem is Challenging
 
-- Sensor noise and atmospheric interference
-- Redundant and low-information spectral bands
-- High dimensionality with limited labeled samples
+Hyperspectral images contain hundreds of spectral bands per pixel.
+While this gives rich information, it also introduces problems:
 
-Without proper preprocessing, these factors severely degrade pixel-wise classification accuracy.
+* Noise from sensors and environment
+* Redundant or useless spectral bands
+* Very high dimensional data
+* Limited labeled samples
 
----
-
-## Dataset Preprocessing
-To ensure reliable spectral information, the dataset was carefully cleaned and prepared:
-
-- **Dead band removal**  
-  Bands with near-zero mean or negligible variance were discarded.
-- **Water absorption band removal**  
-  Spectral bands affected by atmospheric absorption were excluded.
-- **Normalization**  
-  Spectral values were scaled to a consistent range for fair comparison.
-- **Reshaping**  
-  The data cube was transformed from 3D (rows × columns × bands) to a 2D matrix (pixels × bands).
-
-This preprocessing ensured that only informative and physically meaningful bands were retained.
+👉 Without proper preprocessing, classification becomes unreliable.
 
 ---
 
-## Least-Square Spectral Denoising
-Noise reduction was performed using **Least-Square (LS) denoising**, applied directly to the spectral domain.
+## ⚙️ Data Preprocessing
 
-- Reduces additive noise while preserving spectral shape
-- Avoids over-smoothing critical class-discriminative features
-- Maintains consistency across neighboring spectral bands
+To improve data quality, several steps were applied:
 
-### Validation
-Denoising quality was evaluated using:
-- Root Mean Squared Error (RMSE)
-- Spectral Angle measures
+* **Removed dead bands**
+  (bands with very low variance or no useful information)
 
-These metrics confirmed that spectral signatures were preserved with minimal distortion.
+* **Removed water absorption bands**
+  (distorted by atmospheric effects)
 
----
+* **Normalization**
+  (scaled all values for consistency)
 
-## Sparse Representation & Classification
-Classification was performed using **sparse coding solved via ADMM**.
+* **Reshaping**
+  Converted 3D data → 2D matrix (pixels × features)
 
-### Training–Testing Strategy
-- 20% of samples per class used for training
-- 80% reserved for testing
-- Class-wise splitting ensured balanced representation
-
-Training samples formed a **dictionary of spectral signatures**, while test samples were treated as unknown spectra.
+👉 Result: Clean, usable spectral data.
 
 ---
 
-### ADMM-Based Sparse Coding
-For each test pixel:
+## 🔧 Step 1: Least-Square Denoising
 
-- Sparse coefficients were computed with respect to the training dictionary
-- ADMM iteratively enforced:
-  - Sparsity of coefficients
-  - Consistency with observed spectra
-- Resulting representations were highly sparse, activating only a few relevant atoms
+Noise was reduced using **Least-Square (LS) denoising**.
 
-This highlighted the most discriminative class-specific signatures.
+### Why LS Denoising?
 
----
+* Reduces noise without destroying important patterns
+* Preserves the shape of spectral signatures
+* Keeps class-specific information intact
 
-## Residual-Based Decision Rule
-Classification was based on **reconstruction residuals**:
+### Evaluation Metrics:
 
-- Each class reconstructed the test spectrum using only its coefficients
-- Reconstruction error was computed per class
-- The class yielding the **minimum residual** was assigned as the label
+* RMSE (error reduction)
+* Spectral similarity (angle-based)
 
-This decision rule makes the classifier robust to noise and irrelevant features.
+👉 Conclusion: Noise reduced while preserving useful information.
 
 ---
 
-## Key Results & Insights
-- LS denoising significantly improves spectral reliability
-- Sparse representation emphasizes class-specific information
-- ADMM provides efficient and stable optimization
-- The combined pipeline yields **robust and accurate classification** on Indian Pines
+## 🧠 Step 2: Sparse Representation (Core Idea)
+
+Each pixel is represented as a **combination of a few important training samples**.
+
+Instead of using all data:
+
+* Only a **small number of relevant samples (sparse)** are used
+* This highlights the most important class-specific patterns
 
 ---
 
-## Why This Approach Matters
-This project demonstrates that:
-- Careful signal preprocessing can rival complex models
-- Sparse optimization offers interpretability and robustness
-- First-principles methods remain highly effective for hyperspectral analysis
+## ⚡ Step 3: ADMM Optimization
+
+Sparse representation is solved using:
+
+**ADMM (Alternating Direction Method of Multipliers)**
+
+### Why ADMM?
+
+* Efficient for large-scale problems
+* Handles sparsity constraints well
+* Converges reliably
+
+👉 It finds the best sparse coefficients for each test pixel.
 
 ---
 
-## Core Concepts Used
-- Hyperspectral image processing
-- Least-Square denoising
-- Sparse representation
-- L1 optimization
-- Alternating Direction Method of Multipliers (ADMM)
-- Residual-based classification
+## 🎯 Classification Strategy
+
+Classification is done using a **residual-based method**:
+
+1. Each class tries to reconstruct the test pixel
+2. Reconstruction error is calculated
+3. The class with the **lowest error** is selected
+
+👉 Intuition:
+
+> The correct class reconstructs the signal better.
 
 ---
 
-## Takeaway
-A principled combination of **denoising + sparse modeling** can effectively handle the noise, redundancy, and high dimensionality of hyperspectral data—without resorting to black-box learning models.
+## 📊 Training Strategy
 
-update 
+* 20% samples → Training
+* 80% samples → Testing
+* Balanced across classes
+
+Training data forms a **dictionary of spectral signatures**.
+
+---
+
+## 🔍 Key Insights
+
+* Denoising improves data reliability significantly
+* Sparse representation focuses on important features
+* ADMM ensures efficient and stable optimization
+* Residual-based classification is robust to noise
+
+---
+
+## 🚀 Why This Approach is Interesting
+
+This project shows that:
+
+* You don’t always need deep learning
+* Clean data + smart modeling can perform very well
+* Sparse methods provide **interpretability**, not just accuracy
+
+---
+
+## 🧠 Core Concepts Used
+
+* Hyperspectral imaging
+* Least-Square denoising
+* Sparse representation
+* L1 optimization
+* ADMM
+* Residual-based classification
+
+---
+
+## 📌 Final Takeaway
+
+A well-designed pipeline combining:
+
+> **Denoising + Sparse Modeling + Optimization**
+
+can effectively handle high-dimensional noisy data and produce reliable classification results — without relying on black-box models.
